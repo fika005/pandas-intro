@@ -145,19 +145,23 @@ class Graph() :
         dist = {vertex: float('inf') for vertex in q}
         prev = {vertex: None for vertex in q}
         dist[startNode] = 0
+
         while len(q) != 0:
-            min_val = min(dist.values())
-            for key in dist.keys():
-                if dist[key] == min_val:
+            min_val = float('inf')
+            for key in q:
+                if dist[key] <= min_val:
+                    min_val = dist[key]
                     u = key
+            q.remove(u)
             if min_val == float('inf'):
                 break
-            dist.pop(u)
+
             for edge in self.edgeMap[u]:
-                alt = min_val + int(edge.weight)
+                alt = dist[u] + int(edge.weight)
                 if alt < dist[edge.dest]:
                     dist[edge.dest] = alt
                     prev[edge.dest] = u
+
         return dist, prev
 
 
@@ -170,17 +174,11 @@ class Graph() :
     reached = [source]
     unreached = [other vertices]
     tree = []
-    While
-    unreached is not empty: find
-    the
-    lowest - cost
-    edge(u, v)
-    such
-    that: u is in reached
-    v is in unreached
-    tree.add((u, v))
-    reached.add(v)
-    unreached.remove(v)
+    While unreached is not empty: 
+        find the lowest - cost edge(u, v) such that: u is in reached v is in unreached
+        tree.add((u, v))
+        reached.add(v)
+        unreached.remove(v)
     '''
     def prim(self, startNode):
         tree = Graph()
@@ -190,12 +188,12 @@ class Graph() :
             min_val = float('inf')
             for r in reached:
                 for e in self.edgeMap[r.name]:
-                    if e.weight <= min_val and e.dest in unreached:
-                        min_val = e.weight
+                    if int(e.weight) <= min_val and e.dest in unreached:
+                        min_val = int(e.weight)
                         min_node = e.dest
                         min_source = e.src
-            tree.addEdge(min_source, min_node, min_val)
-            reached.append(min_node)
+            tree.addEdge(min_source, min_node, str(min_val))
+            reached.append(Node(min_node))
             unreached.remove(min_node)
         return tree
 
@@ -220,24 +218,24 @@ class Graph() :
             in_clique = True
             for n in max_clq:
                 connected = False
-                for e in self.edgeMap[n]:
+                for e in self.edgeMap[n.name]:
                     if e.dest == next.name:
                         connected = True
                 if connected == False:
                     in_clique = False
             if in_clique:
                 max_clq.append(next)
-                for e in self.edgeMap[next]:
+                for e in self.edgeMap[next.name]:
                     if Node(e.dest) not in max_clq:
                         q.append(Node(e.dest))
-
         return max_clq
 
-    
+
 if __name__ == "__main__":
     graph = Graph()
-    graph.readFromFile("soc-tribes.edges")
-    # print(graph.edgeMap)
+    graph.readFromFile("mytest.txt")
     print(graph.breadthFirstSearch('1', '7'))
     print(graph.depthFirstSearch('1', '7'))
-    print(graph.djikstra('1'))
+    print(graph.djikstra('0'))
+    print(graph.prim('0'))
+    print(graph.clique('5'))
